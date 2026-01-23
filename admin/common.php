@@ -60,7 +60,18 @@ function getDB() {
         return DB::getInstance();
     } catch (Exception $e) {
         error_log("DB Error: " . $e->getMessage());
-        throw $e;
+        // Return null instead of throwing to allow graceful error handling
+        return null;
+    }
+}
+
+// Check if DB is available
+function isDBAvailable() {
+    try {
+        $db = getDB();
+        return $db !== null;
+    } catch (Exception $e) {
+        return false;
     }
 }
 

@@ -5,7 +5,8 @@
  */
 
 // Database
-define('DB_HOST', 'localhost');
+// Используйте '127.0.0.1' вместо 'localhost' если возникают проблемы с сокетом
+define('DB_HOST', '127.0.0.1'); // или 'localhost' если сокет работает
 define('DB_NAME', 'shorts_collector');
 define('DB_USER', 'shorts_user');
 define('DB_PASS', 'qweasd333123');

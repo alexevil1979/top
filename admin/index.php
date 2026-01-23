@@ -3,25 +3,45 @@ require_once __DIR__ . '/common.php';
 checkAuth();
 
 $db = getDB();
+$dbError = null;
 
-// Statistics
-$totalShorts = $db->fetchOne("SELECT COUNT(*) as cnt FROM shorts")['cnt'];
-$totalCollections = $db->fetchOne("SELECT COUNT(*) as cnt FROM collections WHERE enabled = 1")['cnt'];
-$activeSchedules = $db->fetchOne("SELECT COUNT(*) as cnt FROM schedules WHERE active = 1")['cnt'];
-$recentShorts = $db->fetchAll(
-    "SELECT s.*, c.name as collection_name 
-     FROM shorts s 
-     LEFT JOIN collections c ON s.collection_id = c.id 
-     ORDER BY s.created_at DESC 
-     LIMIT 10"
-);
-$recentLogs = $db->fetchAll(
-    "SELECT el.*, c.name as collection_name 
-     FROM execution_logs el 
-     LEFT JOIN collections c ON el.collection_id = c.id 
-     ORDER BY el.created_at DESC 
-     LIMIT 10"
-);
+if (!$db) {
+    $dbError = "База данных недоступна. Проверьте настройки подключения в config/config.php";
+    $totalShorts = 0;
+    $totalCollections = 0;
+    $activeSchedules = 0;
+    $recentShorts = [];
+    $recentLogs = [];
+} else {
+    try {
+        // Statistics
+        $totalShorts = $db->fetchOne("SELECT COUNT(*) as cnt FROM shorts")['cnt'] ?? 0;
+        $totalCollections = $db->fetchOne("SELECT COUNT(*) as cnt FROM collections WHERE enabled = 1")['cnt'] ?? 0;
+        $activeSchedules = $db->fetchOne("SELECT COUNT(*) as cnt FROM schedules WHERE active = 1")['cnt'] ?? 0;
+        $recentShorts = $db->fetchAll(
+            "SELECT s.*, c.name as collection_name 
+             FROM shorts s 
+             LEFT JOIN collections c ON s.collection_id = c.id 
+             ORDER BY s.created_at DESC 
+             LIMIT 10"
+        ) ?: [];
+        $recentLogs = $db->fetchAll(
+            "SELECT el.*, c.name as collection_name 
+             FROM execution_logs el 
+             LEFT JOIN collections c ON el.collection_id = c.id 
+             ORDER BY el.created_at DESC 
+             LIMIT 10"
+        ) ?: [];
+    } catch (Exception $e) {
+        $dbError = "Ошибка при работе с БД: " . $e->getMessage();
+        error_log("Index page DB error: " . $e->getMessage());
+        $totalShorts = 0;
+        $totalCollections = 0;
+        $activeSchedules = 0;
+        $recentShorts = [];
+        $recentLogs = [];
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -37,6 +57,22 @@ $recentLogs = $db->fetchAll(
     
     <div class="container-fluid mt-4">
         <h1 class="mb-4">Панель управления</h1>
+        
+        <?php if ($dbError): ?>
+            <div class="alert alert-danger">
+                <h5><i class="bi bi-exclamation-triangle"></i> Ошибка подключения к базе данных</h5>
+                <p><?= h($dbError) ?></p>
+                <hr>
+                <p><strong>Решение:</strong></p>
+                <ol>
+                    <li>Убедитесь, что MySQL/MariaDB запущен: <code>sudo systemctl status mysql</code></li>
+                    <li>Проверьте настройки в <code>config/config.php</code></li>
+                    <li>Проверьте, что база данных создана: <code>mysql -u root -p &lt; sql/schema.sql</code></li>
+                    <li>Проверьте права пользователя БД</li>
+                </ol>
+                <p>Подробности в логах: <code>/ssd/www/top/storage/error.log</code></p>
+            </div>
+        <?php endif; ?>
         
         <!-- Statistics -->
         <div class="row mb-4">
