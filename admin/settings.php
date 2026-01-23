@@ -71,10 +71,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <label class="form-label">API Key</label>
                             <input type="text" name="youtube_api_key" class="form-control" 
                                    value="<?= h($settingsMap['youtube_api_key'] ?? '') ?>" 
-                                   placeholder="Введите YouTube Data API v3 ключ">
+                                   placeholder="Введите YouTube Data API v3 ключ"
+                                   required>
                             <small class="form-text text-muted">
                                 Получить ключ: <a href="https://console.cloud.google.com/apis/credentials" target="_blank">Google Cloud Console</a>
                             </small>
+                            <?php if (!empty($settingsMap['youtube_api_key'])): ?>
+                                <div class="mt-2">
+                                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="testApiKey()">
+                                        <i class="bi bi-play-circle"></i> Проверить ключ
+                                    </button>
+                                    <span id="apiKeyTestResult" class="ms-2"></span>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                     
@@ -136,5 +145,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function testApiKey() {
+            const apiKey = document.querySelector('input[name="youtube_api_key"]').value;
+            const resultSpan = document.getElementById('apiKeyTestResult');
+            
+            if (!apiKey) {
+                resultSpan.innerHTML = '<span class="text-danger">Введите ключ</span>';
+                return;
+            }
+            
+            resultSpan.innerHTML = '<span class="text-info">Проверка...</span>';
+            
+            // Test API key with a simple request
+            const testUrl = 'https://www.googleapis.com/youtube/v3/videos?part=snippet&id=dQw4w9WgXcQ&key=' + apiKey;
+            
+            fetch(testUrl)
+                .then(response => {
+                    if (response.ok) {
+                        resultSpan.innerHTML = '<span class="text-success"><i class="bi bi-check-circle"></i> Ключ работает</span>';
+                    } else {
+                        resultSpan.innerHTML = '<span class="text-danger"><i class="bi bi-x-circle"></i> Ошибка: ' + response.status + '</span>';
+                    }
+                })
+                .catch(error => {
+                    resultSpan.innerHTML = '<span class="text-danger"><i class="bi bi-x-circle"></i> Ошибка проверки</span>';
+                });
+        }
+    </script>
 </body>
 </html>

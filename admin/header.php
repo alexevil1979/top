@@ -21,6 +21,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="settings.php"><i class="bi bi-gear"></i> Настройки</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="system_check.php"><i class="bi bi-shield-check"></i> Проверка системы</a>
+                </li>
             </ul>
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
