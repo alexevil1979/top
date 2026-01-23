@@ -36,6 +36,9 @@ cd top
 # На VPS сервере
 cd /ssd/www/top
 
+# Если получили ошибку "dubious ownership", выполните:
+sudo git config --global --add safe.directory /ssd/www/top
+
 # Сохраните изменения в config/config.php (если были локальные правки)
 cp config/config.php config/config.php.backup
 

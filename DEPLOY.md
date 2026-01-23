@@ -60,6 +60,9 @@ cd top
 sudo chown -R www-data:www-data /ssd/www/top
 sudo chmod -R 755 /ssd/www/top
 sudo chmod -R 777 /ssd/www/top/storage
+
+# Настройка Git для работы от root (если нужно)
+sudo git config --global --add safe.directory /ssd/www/top
 ```
 
 ### 5. Настройка Apache
