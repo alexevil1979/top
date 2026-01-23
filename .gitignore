@@ -1,0 +1,28 @@
+# PHP
+*.log
+*.cache
+vendor/
+composer.lock
+
+# Storage
+storage/frames/*
+!storage/frames/.gitkeep
+storage/*.log
+
+# Config (if contains sensitive data)
+# config/config.php
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp

@@ -1,0 +1,31 @@
+# Apache Configuration
+RewriteEngine On
+
+# Security headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>
+
+# Deny access to sensitive files
+<FilesMatch "^(config\.php|\.htaccess|\.git)">
+    Require all denied
+</FilesMatch>
+
+# Deny directory listing
+Options -Indexes
+
+# PHP settings
+<IfModule mod_php8.c>
+    php_value upload_max_filesize 100M
+    php_value post_max_size 100M
+    php_value max_execution_time 3600
+    php_value memory_limit 512M
+</IfModule>
+
+# Serve storage files
+<IfModule mod_rewrite.c>
+    RewriteCond %{REQUEST_URI} ^/storage/
+    RewriteRule ^storage/(.*)$ storage/$1 [L]
+</IfModule>
