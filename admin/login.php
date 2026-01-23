@@ -4,14 +4,21 @@ require_once __DIR__ . '/common.php';
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'] ?? '';
-    $password = $_POST['password'] ?? '';
-    
-    if (login($username, $password)) {
-        header('Location: index.php');
-        exit;
-    } else {
-        $error = 'Неверный логин или пароль';
+    try {
+        $username = trim($_POST['username'] ?? '');
+        $password = $_POST['password'] ?? '';
+        
+        if (empty($username) || empty($password)) {
+            $error = 'Заполните все поля';
+        } elseif (login($username, $password)) {
+            header('Location: index.php');
+            exit;
+        } else {
+            $error = 'Неверный логин или пароль';
+        }
+    } catch (Exception $e) {
+        error_log("Login error: " . $e->getMessage());
+        $error = 'Произошла ошибка. Проверьте логи.';
     }
 }
 

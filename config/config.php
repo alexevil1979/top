@@ -28,7 +28,7 @@ define('API_URL', BASE_URL . '/api');
 
 // Admin
 define('ADMIN_USER', 'admin');
-define('ADMIN_PASS_HASH', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'); // password: password (изменить!)
+define('ADMIN_PASS_HASH', '$2y$10$ctTVsyUOY27pfDOYNgCWUOYtDG.tY4hwPsIxUsUOxD.HIwp1NYi/G'); // password: password (изменить!)
 
 // System
 define('TIMEZONE', 'Europe/Moscow');

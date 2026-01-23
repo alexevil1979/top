@@ -4,9 +4,16 @@
  */
 
 require_once __DIR__ . '/../config/config.php';
-require_once __DIR__ . '/../core/DB.php';
 
-session_start();
+// Start session before any output
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Load DB class (will be initialized when needed)
+if (file_exists(__DIR__ . '/../core/DB.php')) {
+    require_once __DIR__ . '/../core/DB.php';
+}
 
 // Check authentication
 function checkAuth() {
@@ -18,12 +25,23 @@ function checkAuth() {
 
 // Login function
 function login($username, $password) {
-    if ($username === ADMIN_USER && password_verify($password, ADMIN_PASS_HASH)) {
-        $_SESSION['admin_logged_in'] = true;
-        $_SESSION['admin_username'] = $username;
-        return true;
+    try {
+        if (empty($username) || empty($password)) {
+            return false;
+        }
+        
+        if ($username === ADMIN_USER) {
+            if (password_verify($password, ADMIN_PASS_HASH)) {
+                $_SESSION['admin_logged_in'] = true;
+                $_SESSION['admin_username'] = $username;
+                return true;
+            }
+        }
+        return false;
+    } catch (Exception $e) {
+        error_log("Login error: " . $e->getMessage());
+        return false;
     }
-    return false;
 }
 
 // Logout function
@@ -35,7 +53,15 @@ function logout() {
 
 // Get DB instance
 function getDB() {
-    return DB::getInstance();
+    if (!class_exists('DB')) {
+        require_once __DIR__ . '/../core/DB.php';
+    }
+    try {
+        return DB::getInstance();
+    } catch (Exception $e) {
+        error_log("DB Error: " . $e->getMessage());
+        throw $e;
+    }
 }
 
 // Escape HTML
