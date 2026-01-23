@@ -26,8 +26,9 @@ Production-ready система автоматического поиска то
 ### 1. Клонирование и настройка
 
 ```bash
-cd /ssd/www/top
-git clone <repository-url> .
+cd /ssd/www
+git clone https://github.com/alexevil1979/top.git top
+cd top
 ```
 
 ### 2. Установка зависимостей системы
@@ -147,7 +148,7 @@ shorts-collector/
 
 ```bash
 cd /ssd/www/top
-git pull origin main
+git pull https://github.com/alexevil1979/top.git main
 # Проверьте изменения в config/config.php
 # При необходимости обновите БД:
 mysql -u shorts_user -p shorts_collector < sql/schema.sql

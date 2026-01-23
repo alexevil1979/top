@@ -50,7 +50,7 @@ EXIT;
 
 ```bash
 cd /ssd/www
-git clone <repository-url> top
+git clone https://github.com/alexevil1979/top.git top
 cd top
 ```
 
